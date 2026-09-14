@@ -16,7 +16,7 @@ A minimal end-to-end test case for the AI-103 project's core loop:
 
 ```bash
 pip install -r requirements.txt
-mini --yolo -c mini-custom.yaml
+mini --yolo -c mini-custom.yaml --task "Change the background color in style.css to green and run pytest."
 ```
 
 > Currently wired to **Groq** (fast, free-tier friendly) for local testing,
