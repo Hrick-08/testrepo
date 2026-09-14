@@ -15,7 +15,7 @@ A minimal end-to-end test case for the AI-103 project's core loop:
 ## Try it locally (before wiring up the real webhook)
 
 ```bash
-pip install requirement.txt
+pip install requirements.txt
 export GROQ_API_KEY="<your-groq-key>"
 python run_local_test.py
 pytest test_style.py -v 
