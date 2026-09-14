@@ -1,0 +1,34 @@
+# mini-SWE-agent config.
+#
+# TESTING: currently pointed at Groq (fast + free-tier friendly) via litellm
+# so the pipeline can be exercised end-to-end without an Azure deployment.
+# Swap back to Azure OpenAI for the actual submission — see the commented
+# block below for that config.
+#
+# litellm's Groq model name format is: groq/<model>
+# Docs: https://docs.litellm.ai/docs/providers/groq
+
+model:
+  model_name: "groq/llama-3.3-70b-versatile"
+  model_kwargs:
+    api_key: "${GROQ_API_KEY}"
+
+# --- Azure OpenAI (swap in for the real submission) ---
+# model:
+#   model_name: "azure/gpt-4o-mini"   # <-- your Azure Foundry deployment name
+#   model_kwargs:
+#     api_base: "${AZURE_OPENAI_ENDPOINT}"     # e.g. https://your-resource.openai.azure.com
+#     api_key: "${AZURE_OPENAI_API_KEY}"
+#     api_version: "2024-08-01-preview"
+
+# mini-swe-agent runs entirely via bash actions (no custom tool schema needed).
+# We run it inside a container (see Dockerfile) so `subprocess.run` calls are
+# isolated from the host VM — this is the "sandbox" swap the architecture needs.
+environment:
+  type: "docker"          # swap for "local" only when testing outside a container
+  image: "demo-agent-sandbox:latest"
+  cwd: "/repo"
+
+# Cap the number of agent steps so a stuck run can't loop forever.
+agent:
+  max_steps: 15
