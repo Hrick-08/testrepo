@@ -18,16 +18,13 @@ A minimal end-to-end test case for the AI-103 project's core loop:
 pip install mini-swe-agent litellm
 export GROQ_API_KEY="<your-groq-key>"   # free tier at console.groq.com
 
-docker build -t demo-agent-sandbox .
-
 python -c "
 from minisweagent.agents.default import DefaultAgent
 from minisweagent.models.litellm_model import LitellmModel
-from minisweagent.environments.docker import DockerEnvironment
+from minisweagent.environments.local import LocalEnvironment
 
 model = LitellmModel(model_name='groq/llama-3.3-70b-versatile')
-env = DockerEnvironment(image='demo-agent-sandbox:latest', cwd='/repo',
-                         mount={'.': '/repo'})
+env = LocalEnvironment(cwd='.')
 agent = DefaultAgent(model, env)
 agent.run(open('ISSUE.md').read())
 "
@@ -35,9 +32,13 @@ agent.run(open('ISSUE.md').read())
 pytest test_style.py -v   # should now pass if the agent succeeded
 ```
 
-> Currently wired to **Groq** (fast, free-tier friendly) for local testing.
-> Swap to Azure OpenAI before the actual submission — see the commented
-> block in `mini_agent_config.yaml` and the note in `run_agent.py`.
+> Currently wired to **Groq** (fast, free-tier friendly) for local testing,
+> and running **without Docker** (`LocalEnvironment`) for a quick first pass —
+> the agent's bash commands run directly on your machine. That's fine
+> against this throwaway test repo, but never point the no-sandbox mode at a
+> repo with real credentials or data nearby. Swap to `DockerEnvironment` +
+> the `Dockerfile` here (see `mini_agent_config.yaml`) once you're past
+> initial testing, and swap to Azure OpenAI before the actual submission.
 
 ## Full pipeline
 

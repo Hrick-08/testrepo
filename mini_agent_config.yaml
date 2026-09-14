@@ -22,12 +22,21 @@ model:
 #     api_version: "2024-08-01-preview"
 
 # mini-swe-agent runs entirely via bash actions (no custom tool schema needed).
-# We run it inside a container (see Dockerfile) so `subprocess.run` calls are
-# isolated from the host VM — this is the "sandbox" swap the architecture needs.
+# For the real deployment we run it inside a container (see Dockerfile) so
+# subprocess.run calls are isolated from the host VM.
+#
+# For quick local testing (no Docker needed), use "local" instead — the
+# agent's bash commands then run directly on your machine. Only do this
+# against a throwaway repo like this test one; never against anything with
+# real credentials or data nearby, since there's no sandbox boundary.
 environment:
-  type: "docker"          # swap for "local" only when testing outside a container
-  image: "demo-agent-sandbox:latest"
-  cwd: "/repo"
+  type: "local"            # <-- no-Docker testing mode
+  cwd: "."
+
+# environment:
+#   type: "docker"          # <-- real deployment: swap back to this
+#   image: "demo-agent-sandbox:latest"
+#   cwd: "/repo"
 
 # Cap the number of agent steps so a stuck run can't loop forever.
 agent:
