@@ -44,7 +44,7 @@ def run_agent_on_issue(issue_title: str, issue_body: str, repo_path: Path) -> bo
     Returns True if the agent's changes pass the repo's own test suite."""
     # TESTING: using Groq via litellm for now — swap to "azure/gpt-4o-mini"
     # (with AZURE_OPENAI_ENDPOINT / AZURE_OPENAI_API_KEY set) for submission.
-    model = LitellmModel(model_name="groq/llama-3.3-70b-versatile")
+    model = LitellmModel(model_name="groq/openai/gpt-oss-120b")
     env = DockerEnvironment(image=SANDBOX_IMAGE, cwd="/repo", mount={str(repo_path): "/repo"})
 
     agent = DefaultAgent(model, env)

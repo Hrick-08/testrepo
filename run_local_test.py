@@ -9,7 +9,7 @@ from minisweagent.agents.default import DefaultAgent
 from minisweagent.models.litellm_model import LitellmModel
 from minisweagent.environments.local import LocalEnvironment
 
-model = LitellmModel(model_name="groq/llama-3.3-70b-versatile")
+model = LitellmModel(model_name="groq/openai/gpt-oss-120b")
 env = LocalEnvironment(cwd=".")
 agent = DefaultAgent(model, env)
 agent.run(open("ISSUE.md").read())

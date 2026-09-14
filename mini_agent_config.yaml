@@ -9,7 +9,7 @@
 # Docs: https://docs.litellm.ai/docs/providers/groq
 
 model:
-  model_name: "groq/llama-3.3-70b-versatile"
+  model_name: "groq/openai/gpt-oss-120b"
   model_kwargs:
     api_key: "${GROQ_API_KEY}"
 
