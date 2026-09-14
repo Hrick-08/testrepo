@@ -15,21 +15,10 @@ A minimal end-to-end test case for the AI-103 project's core loop:
 ## Try it locally (before wiring up the real webhook)
 
 ```bash
-pip install mini-swe-agent litellm
-export GROQ_API_KEY="<your-groq-key>"   # free tier at console.groq.com
-
-python -c "
-from minisweagent.agents.default import DefaultAgent
-from minisweagent.models.litellm_model import LitellmModel
-from minisweagent.environments.local import LocalEnvironment
-
-model = LitellmModel(model_name='groq/llama-3.3-70b-versatile')
-env = LocalEnvironment(cwd='.')
-agent = DefaultAgent(model, env)
-agent.run(open('ISSUE.md').read())
-"
-
-pytest test_style.py -v   # should now pass if the agent succeeded
+pip install requirement.txt
+export GROQ_API_KEY="<your-groq-key>"
+python run_local_test.py
+pytest test_style.py -v 
 ```
 
 > Currently wired to **Groq** (fast, free-tier friendly) for local testing,
