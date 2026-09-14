@@ -1,0 +1,56 @@
+# Sample mini-SWE-agent configuration for Azure AI Foundry.
+#
+# Before running, replace the two placeholders below:
+#   <your-resource>  with your Azure AI Foundry resource name
+#   <deployment>     with the deployed model name
+#
+# Keep API keys out of this file. mini-SWE-agent does not load the project's
+# .env automatically. Set OPENAI_API_KEY in the shell or in mini-SWE-agent's
+# global .env file instead.
+#
+# PowerShell example:
+#   $env:OPENAI_API_KEY = "<your-azure-foundry-api-key>"
+#   mini --yolo -c mini-custom.yaml.example
+#
+# The endpoint must end with /openai/v1 for Azure AI Foundry's OpenAI-compatible
+# API. The deployment name is used as the model name after the openai/ prefix.
+
+model:
+  model_name: "openai/<deployment>"
+  model_kwargs:
+    api_base: "https://<your-resource>.services.ai.azure.com/openai/v1"
+    api_key: "your-azure-foundry-api-key"
+  cost_tracking: "ignore_errors"
+
+# Run agent shell commands on the local machine.
+# Use the Docker block below instead when working with untrusted repositories.
+environment:
+  type: "local"
+  cwd: "."
+
+# Docker alternative:
+# environment:
+#   type: "docker"
+#   image: "demo-agent-sandbox:latest"
+#   cwd: "/repo"
+
+agent:
+  system_template: |
+    You are a helpful assistant that can interact with a computer.
+
+  instance_template: |
+    Please solve this issue: {{task}}
+
+    You can execute bash commands and edit files to implement the necessary changes.
+
+    ## Recommended Workflow
+
+    1. Analyze the codebase by finding and reading relevant files
+    2. Create a script to reproduce the issue
+    3. Edit the source code to resolve the issue
+    4. Verify your fix works by running your script again
+    5. Test edge cases to ensure the fix is robust
+    6. Submit your changes and finish by issuing:
+       echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT
+
+  step_limit: 15
