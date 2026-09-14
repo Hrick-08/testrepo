@@ -12,7 +12,9 @@ import os
 import subprocess
 import tempfile
 from pathlib import Path
+from urllib.parse import quote
 
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from fastapi import FastAPI, Request
 from github import Github  # PyGithub
 from minisweagent.agents.default import DefaultAgent
@@ -24,8 +26,32 @@ app = FastAPI()
 GITHUB_TOKEN = os.environ["GITHUB_TOKEN"]
 REPO_NAME = os.environ["REPO_NAME"]        # e.g. "yourname/demo-repo"
 SANDBOX_IMAGE = "demo-agent-sandbox:latest"
+FOUNDRY_ENDPOINT = os.environ["AZURE_FOUNDRY_ENDPOINT"].rstrip("/")
+FOUNDRY_DEPLOYMENT = os.environ["AZURE_FOUNDRY_DEPLOYMENT"]
+FOUNDRY_API_VERSION = os.getenv("AZURE_FOUNDRY_API_VERSION", "2025-04-01-preview")
 
 gh = Github(GITHUB_TOKEN)
+
+
+def create_model() -> LitellmModel:
+    """Create an OpenAI-compatible mini-SWE-agent model for Azure AI Foundry."""
+    api_key = os.getenv("AZURE_FOUNDRY_API_KEY")
+    if not api_key:
+        token_provider = get_bearer_token_provider(
+            DefaultAzureCredential(), "https://ai.azure.com/.default"
+        )
+        api_key = token_provider()
+    api_base = FOUNDRY_ENDPOINT
+    if not FOUNDRY_ENDPOINT.endswith("/openai/v1"):
+        separator = "&" if "?" in FOUNDRY_ENDPOINT else "?"
+        api_base = f"{FOUNDRY_ENDPOINT}{separator}api-version={quote(FOUNDRY_API_VERSION)}"
+    return LitellmModel(
+        model_name=f"openai/{FOUNDRY_DEPLOYMENT}",
+        model_kwargs={
+            "api_base": api_base,
+            "api_key": api_key,
+        },
+    )
 
 
 def clone_repo_to_sandbox(repo_url: str, branch_base: str = "main") -> Path:
@@ -42,9 +68,7 @@ def clone_repo_to_sandbox(repo_url: str, branch_base: str = "main") -> Path:
 def run_agent_on_issue(issue_title: str, issue_body: str, repo_path: Path) -> bool:
     """Runs mini-SWE-agent inside the Docker sandbox against the issue text.
     Returns True if the agent's changes pass the repo's own test suite."""
-    # TESTING: using Groq via litellm for now — swap to "azure/gpt-4o-mini"
-    # (with AZURE_OPENAI_ENDPOINT / AZURE_OPENAI_API_KEY set) for submission.
-    model = LitellmModel(model_name="groq/openai/gpt-oss-120b")
+    model = create_model()
     env = DockerEnvironment(image=SANDBOX_IMAGE, cwd="/repo", mount={str(repo_path): "/repo"})
 
     agent = DefaultAgent(model, env)

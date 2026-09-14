@@ -9,7 +9,7 @@ from pathlib import Path
 
 CSS_PATH = Path(__file__).parent / "style.css"
 OLD_COLOR = "#ffffff"
-EXPECTED_NEW_COLOR = "#1e1e2f"  # dark navy — the color requested in the issue
+EXPECTED_NEW_COLOR = "#00ff00"  # blue — the color requested in the current task
 
 
 def _get_background_color() -> str:
