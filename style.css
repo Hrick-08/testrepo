@@ -1,11 +1,1 @@
-body {
-  background-color: #00ff00;
-  color: #ffffff;
-  font-family: system-ui, sans-serif;
-  margin: 0;
-  padding: 2rem;
-}
-
-h1 {
-  font-size: 2rem;
-}
+﻿body {\n  background-color: #ff0000;\n  color: #ffffff;\n  font-family: system-ui, sans-serif;\n  margin: 0;\n  padding: 2rem;\n}\n\nh1 {\n  font-size: 2rem;\n}\n
