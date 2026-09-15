@@ -1,5 +1,8 @@
+ 
+import re
+ 
 body {
-  background-color: cyan;
+  background-color: #ff0000;
   color: #ff0000;
   font-family: system-ui, sans-serif;
   margin: 0;
